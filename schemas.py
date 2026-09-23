@@ -1,4 +1,4 @@
-from pydantic import BaseModel,ConfigDict
+from pydantic import BaseModel,ConfigDict, EmailStr
 from datetime import datetime
 
 # write your four schemas here
@@ -31,3 +31,19 @@ class ProductResponse(BaseModel):
     stock: int
     in_stock: bool
     created_at: datetime
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
+class UserResponse(BaseModel):
+    model_config =ConfigDict(from_attributes =True)
+
+    id: int
+    email: EmailStr
+    created_at: datetime
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str

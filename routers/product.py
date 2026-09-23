@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from schemas import ProductCreate,ProductResponse
 import models
 from database import get_db
+from routers.auth import get_current_user
 
 router = APIRouter()#prefix="/products",tags=["Products"])
 
@@ -24,7 +25,7 @@ def get_product(id: int,db:Session = Depends(get_db)):
     return product
 
 @router.post("/products", status_code=status.HTTP_201_CREATED, response_model=ProductResponse)
-def create_product(product: ProductCreate,db:Session = Depends(get_db)):
+def create_product(product: ProductCreate,db:Session = Depends(get_db),current_user: models.User = Depends(get_current_user)):
     #new_product = models.Product(**product.dict()).
     new_product = models.Product(name= product.name,description= product.description,price= product.price,stock= product.stock)
     db.add(new_product)
@@ -33,7 +34,7 @@ def create_product(product: ProductCreate,db:Session = Depends(get_db)):
     return new_product
 
 @router.delete("/products/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_product(id: int,db:Session = Depends(get_db)):
+def delete_product(id: int,db:Session = Depends(get_db),current_user: models.User = Depends(get_current_user)):
     product = db.query(models.Product).filter(models.Product.id == id)
     if product.first() is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"Product with id {id} does not exist")
@@ -43,7 +44,7 @@ def delete_product(id: int,db:Session = Depends(get_db)):
 
 
 @router.put('/products/{id}',response_model=ProductResponse)
-def update_product(id: int,products: ProductCreate,db:Session = Depends(get_db)):
+def update_product(id: int,products: ProductCreate,db:Session = Depends(get_db),current_user: models.User = Depends(get_current_user)):
     product = db.query(models.Product).filter(models.Product.id == id)
     if product.first() is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"Product with id {id} does not exist")

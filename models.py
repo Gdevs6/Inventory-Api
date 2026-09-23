@@ -1,3 +1,5 @@
+
+
 from sqlalchemy import Column,String,Float,Boolean,Integer,TIMESTAMP,ForeignKey
 from database import Base
 from sqlalchemy.sql import func
@@ -41,3 +43,12 @@ class Product(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
     # models.py — add this line to Product class
     minimum_stock = Column(Integer, default=5 ,server_default='5')
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String, unique= True, nullable=False, index=True)
+    hashed_password = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True),server_default=func.now())
